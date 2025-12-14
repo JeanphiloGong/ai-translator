@@ -12,6 +12,7 @@ Lightweight translation tooling that turns Chinese or English input into polishe
 - `pyapp/`: Python implementation (FastAPI service and Typer CLI).
 - `translations.db`: Default SQLite database (auto-created on first run).
 - `requirements.txt`: Python dependencies.
+- `ai-translator`: Convenience wrapper script for the CLI (bash).
 - `goapp/`: Placeholder for a Go implementation (currently empty).
 
 ## Prerequisites
@@ -24,10 +25,10 @@ Lightweight translation tooling that turns Chinese or English input into polishe
 git clone https://github.com/JeanphiloGong/ai-translator.git
 cd ai-translator
 ```
-2) (Optional) create & activate a virtualenv  
+2) (Optional) create & activate a virtualenv (this guide uses `pyapp/.venv`)  
 ```bash
-python -m venv .venv
-source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+python -m venv pyapp/.venv
+source pyapp/.venv/bin/activate  # Windows: pyapp\\.venv\\Scripts\\activate
 ```
 3) Install dependencies  
 ```bash
@@ -52,6 +53,24 @@ python -m pyapp translate-zh "你好世界" --grammar
 python -m pyapp correct-en "This are a cat" --grammar
 ```
 Results print to stdout and are stored in the SQLite database.
+
+## Shortcut script
+Already included in repo root: `ai-translator` (bash). It auto-activates `pyapp/.venv`, sets `DB_PATH` to `translations.db` in the project root, and runs any Typer subcommand.
+
+- Make it executable (once):  
+```bash
+chmod +x ai-translator
+```
+- (Optional) symlink to your PATH for global use:  
+```bash
+ln -sf "$PWD/ai-translator" ~/bin/ai-translator  # ensure ~/bin is in PATH
+```
+- The script resolves symlinks, so using it from `~/bin` still picks the project venv/DB.
+- Usage from any directory:  
+```bash
+ai-translator translate-zh "你好世界" --grammar
+ai-translator correct-en "This are a cat" --grammar
+```
 
 ## Run the API server
 Start FastAPI with Uvicorn:

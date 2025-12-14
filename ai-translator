@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+set -euo pipefail
+
+# Resolve script location even when invoked via symlink (e.g., from ~/bin).
+SCRIPT_PATH="$(readlink -f "$0" 2>/dev/null || echo "$0")"
+SCRIPT_DIR="$(cd "$(dirname "$SCRIPT_PATH")" && pwd)"
+VENV="$SCRIPT_DIR/pyapp/.venv/bin/activate"
+
+if [ ! -f "$VENV" ]; then
+  echo "Virtualenv not found at $VENV." >&2
+  echo "Create it with: python -m venv pyapp/.venv && source pyapp/.venv/bin/activate && pip install -r requirements.txt" >&2
+  exit 1
+fi
+
+# shellcheck disable=SC1090
+source "$VENV"
+
+# Default DB to project-root translations.db unless the caller overrides DB_PATH.
+export DB_PATH="${DB_PATH:-$SCRIPT_DIR/translations.db}"
+
+cd "$SCRIPT_DIR"
+python -m pyapp "$@"

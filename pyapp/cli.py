@@ -17,7 +17,7 @@ def _print_result(result, show_grammar: bool) -> None:
     typer.echo(f"Timestamp: {result.timestamp}")
 
 
-@app.command("translate-zh")
+@app.command("zh")
 def translate_zh(
     text: str = typer.Argument(..., help="Chinese text to translate"),
     grammar: bool = typer.Option(False, "--grammar", help="Include grammar explanations"),
@@ -27,7 +27,7 @@ def translate_zh(
     _print_result(result, grammar)
 
 
-@app.command("correct-en")
+@app.command("en")
 def correct_en(
     text: str = typer.Argument(..., help="English text to correct"),
     grammar: bool = typer.Option(False, "--grammar", help="Include grammar explanations"),
