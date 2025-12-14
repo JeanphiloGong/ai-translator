@@ -1,25 +1,75 @@
-# AI Translation Software
+# AI Translator
 
-This project is a simple translation tool using OpenAI's API to translate Chinese text to English and Japanese, and correct English grammar.
+Lightweight translation tooling that turns Chinese or English input into polished English and Japanese output, with optional grammar notes, and saves every run to SQLite for later reference.
 
-## Features
+## What it does
+- Translate Chinese to English and Japanese, including Hiragana for the Japanese output.
+- Correct English sentences and provide Japanese translations.
+- Add English/Japanese grammar explanations when requested.
+- Persist translation results to a local SQLite database.
 
-- Translate Chinese text to English and Japanese.
-- Provide English and Japanese grammar explanations.
-- Correct the grammar of English sentences.
+## Project layout
+- `pyapp/`: Python implementation (FastAPI service and Typer CLI).
+- `translations.db`: Default SQLite database (auto-created on first run).
+- `requirements.txt`: Python dependencies.
+- `goapp/`: Placeholder for a Go implementation (currently empty).
 
 ## Prerequisites
+- Python 3.9+ recommended.
+- An OpenAI API key (`OPENAI_API_KEY`).
 
-1. **Python 3.6+**: Make sure Python is installed on your machine.
-2. **Virtual Environment**: It's recommended to use a virtual environment to manage dependencies.
-
-## Setup Instructions
-
-Follow these steps to get the project up and running:
-
-### 1. Clone the repository
-
+## Setup
+1) Clone the repo  
 ```bash
 git clone https://github.com/JeanphiloGong/ai-translator.git
-cd AI-Translation-Software
+cd ai-translator
+```
+2) (Optional) create & activate a virtualenv  
+```bash
+python -m venv .venv
+source .venv/bin/activate  # Windows: .venv\\Scripts\\activate
+```
+3) Install dependencies  
+```bash
+pip install -r requirements.txt
+```
+4) Configure environment variables in `.env` (auto-loaded):
+```env
+OPENAI_API_KEY=sk-...
+# Optional overrides:
+# OPENAI_BASE_URL=https://api.chatanywhere.tech/v1
+# OPENAI_MODEL=gpt-4o-2024-08-06
+# DB_PATH=translations.db
+```
 
+## Run the CLI
+Use the Typer commands via the module entrypoint:
+```bash
+# Translate Chinese (add --grammar to include explanations)
+python -m pyapp translate-zh "你好世界" --grammar
+
+# Correct English and translate to Japanese
+python -m pyapp correct-en "This are a cat" --grammar
+```
+Results print to stdout and are stored in the SQLite database.
+
+## Run the API server
+Start FastAPI with Uvicorn:
+```bash
+uvicorn pyapp.api.main:app --reload
+```
+- Health check: `GET http://127.0.0.1:8000/health`
+- Translate Chinese:  
+```bash
+curl -X POST http://127.0.0.1:8000/translate/chinese \
+  -H "Content-Type: application/json" \
+  -d '{"text":"你好世界","include_grammar":true}'
+```
+- Correct English:  
+```bash
+curl -X POST http://127.0.0.1:8000/correct/english \
+  -H "Content-Type: application/json" \
+  -d '{"text":"This are a cat","include_grammar":true}'
+```
+
+The API and CLI both share the same settings and database location configured via `.env`.
