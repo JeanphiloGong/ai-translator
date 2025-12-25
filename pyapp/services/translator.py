@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from pyapp.clients.openai_client import run_structured_chat
@@ -31,12 +31,10 @@ class TranslatorService:
 
     @staticmethod
     def _with_timestamp(result: TranslationResponse) -> TranslationResponse:
-        """Ensure a timestamp exists (favor model-provided value if present)."""
-        if result.timestamp:
-            return result
+        """Stamp result with current UTC timestamp (ignore model-provided timestamps)."""
         return TranslationResponse(
             **result.model_dump(exclude={"timestamp"}),
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
         )
 
     @staticmethod
@@ -69,4 +67,3 @@ def get_service() -> TranslatorService:
     """Create a service with default dependencies."""
     repo = init_repository()
     return TranslatorService(repository=repo)
-

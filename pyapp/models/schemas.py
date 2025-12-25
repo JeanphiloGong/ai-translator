@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import BaseModel, Field
@@ -11,7 +11,7 @@ class TranslationResponse(BaseModel):
     japanese_text: Optional[str] = Field(None, description="Japanese translation.")
     hiragana_pronunciation: Optional[str] = Field(None, description="Hiragana pronunciation for the Japanese text.")
     japanese_grammar: Optional[str] = Field(None, description="Grammar explanation for the Japanese translation.")
-    timestamp: datetime = Field(default_factory=datetime.utcnow, description="Timestamp when the translation was generated.")
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc), description="Timestamp when the translation was generated.")
 
 
 class TextRequest(BaseModel):
