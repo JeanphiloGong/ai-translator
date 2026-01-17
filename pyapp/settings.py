@@ -14,6 +14,7 @@ class Settings(BaseSettings):
     openai_base_url: str = Field(default="https://api.chatanywhere.tech/v1", alias="OPENAI_BASE_URL")
     openai_model: str = Field(default="gpt-4o-2024-08-06", alias="OPENAI_MODEL")
     database_path: Path = Field(default=Path("translations.db"), alias="DB_PATH")
+    internal_api_key: Optional[str] = Field(default=None, alias="INTERNAL_API_KEY")
 
     model_config = SettingsConfigDict(
             env_file=".env",
@@ -25,4 +26,3 @@ class Settings(BaseSettings):
 def get_settings() -> Settings:
     """Return cached settings instance."""
     return Settings()
-
